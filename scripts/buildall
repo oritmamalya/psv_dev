@@ -1,0 +1,266 @@
+#!/bin/sh
+#=========================================================================
+# A makefile for AR CryptoKit Linux/Unix version
+#=========================================================================
+CKITVER="4.9.0"
+INSTALL="/lib"
+PLATFORM=`uname`
+DIST="dist/$PLATFORM"
+INST_ORIG="/arl/n/proj/PKCS11/Install/Utils/"
+PKCS_ROOT=`pwd`
+export PKCS_ROOT
+AR_VERSION="extended"
+export AR_VERSION
+
+#-------------------------------------------------------------------------
+# Check command line parameters - must have 1 parameter
+#-------------------------------------------------------------------------
+if  (test $# -eq 0) || (test $# -gt 2); then
+	echo "Usage: buildall [debug | d | release | r | debug64 | d64 | release64 | r64 ] [clean | c | test | t]"
+	echo "       buildall [install | i | install64 | i64 | install64d | i64d | pack | p | phl | h | java | j]"
+	echo "       [d]   debug       compile all code with debug symbols"
+	echo "       [d64] debug64     compile all code with debug symbols - 64bit"
+	echo "       [r]   release     compile release version"
+	echo "       [r64] release64   compile release version - 64bit"
+	echo "       [c]   clean       delete all objects and libraries (debug and release)"
+	echo "       [t]   test        compile also test programs"
+	echo "       [i]   install     copy files to distribution directory and pack into tar.gz"
+	echo "       [i64] install64   copy files to distribution directory and pack into tar.gz"
+	echo "       [p]   pack        archive and compress the distribution to a tar.gz file"
+	echo "       [h]   phl         run phl test program"
+	echo "       [j]   java        run myTest java code"
+	exit;
+fi
+
+#-------------------------------------------------------------------------
+# Run phl
+#-------------------------------------------------------------------------
+if (test "$1" = "phl") || (test "$1" = "h"); then
+	./$DIST/phl  
+	exit;
+fi
+
+#-------------------------------------------------------------------------
+# Compile Java test
+#-------------------------------------------------------------------------
+if (test "$1" = "java") || (test "$1" = "j"); then
+LD_LIBRARY_PATH=/lib
+export LD_LIBRARY_PATH
+	cd $DIST
+	java -classpath .:ckit.jar myTest  
+	cd ..
+	exit;
+fi
+
+#-------------------------------------------------------------------------
+# Repack distribution file
+#-------------------------------------------------------------------------
+if (test "$1" = "pack") || (test "$1" = "p"); then
+        tar cvfz arckit$CKITVER-$PLATFORM.tar.gz $DIST/*
+	echo "--------- Created distribution package [arckit$CKITVER-$PLATFORM.tar.gz] ---------"        exit;
+fi;
+
+#-------------------------------------------------------------------------
+# Work on CryptoKit version
+#-------------------------------------------------------------------------
+if (test "$1" = "debug") || (test "$1" = "d") || (test "$1" = "id") || (test "$1" = "installd"); then
+	DIST=${DIST}32d
+	EXT="debug"
+        AR_BUILD="debug"
+        unset IS64
+fi
+
+if (test "$1" = "release") || (test "$1" = "r") || (test "$1" = "install") || (test "$1" = "i"); then
+	DIST=${DIST}32r
+	EXT="release"
+        unset AR_BUILD
+        unset IS64
+fi
+
+if (test "$1" = "debug64") || (test "$1" = "d64") || (test "$1" = "install64d") || (test "$1" = "i64d"); then
+	DIST=${DIST}64d
+	EXT="debug64"
+	IS64="yes"
+        AR_BUILD="debug"
+fi
+
+if (test "$1" = "release64") || (test "$1" = "r64") || (test "$1" = "install64") || (test "$1" = "i64"); then
+	DIST=${DIST}64r
+	EXT="release64"
+	IS64="yes"
+        unset AR_BUILD
+fi
+
+export AR_BUILD
+export IS64
+
+#-------------------------------------------------------------------------
+# Prepare or clean distribution 
+#-------------------------------------------------------------------------
+if (test "$2" = "clean") || (test "$2" = "c"); then
+	ARG="clean"
+else 
+	ARG=""
+fi
+
+#-------------------------------------------------------------------------
+# Copy files to distribution directory and pack them
+#-------------------------------------------------------------------------
+if (test "$1" = "install") || (test "$1" = "i")|| (test "$1" = "install64") || (test "$1" = "i64")|| (test "$1" = "id") || (test "$1" = "installd")|| (test "$1" = "install64d") || (test "$1" = "i64d") then
+
+	echo "Copy libraries and programs to $PKCS_ROOT/$DIST"
+	mkdir -p $PKCS_ROOT/$DIST
+	mkdir -p $PKCS_ROOT/$DIST/lib
+	mkdir -p $PKCS_ROOT/$DIST/utils
+	mkdir -p $PKCS_ROOT/$DIST/ini
+	mkdir -p $PKCS_ROOT/$DIST/java
+	cp  dev/ar_jpk11/$EXT/libar_jpk11.so  $DIST/lib
+	cp  dev/cypkcs11/extended/$EXT/libarpkcs11.so  $DIST/lib
+	cp  dev/sadaptor/$EXT/libsadaptor.so  $DIST/lib
+	cp  dev/x509lib/$EXT/libx509.a  $DIST/lib
+	cp  dev/x509dll/$EXT/libckx509.so $DIST/lib
+	cp  dev/pkcs12lib/$EXT/libpkcs12.a  $DIST/lib
+	cp  dev/pkcs12dll/$EXT/libckpkcs12.so $DIST/lib
+	cp  dev/pkcs107lib/$EXT/libpkcs107.a  $DIST/lib
+	cp  dev/pkcs107dll/$EXT/libpkcs107.so $DIST/lib
+	chgrp users dev/samples/phl/$EXT/phl 
+	chgrp users dev/samples/pkcs12/$EXT/pkcs12util 
+	cp -p dev/samples/phl/$EXT/phl  $DIST/utils
+	cp -p dev/samples/pkcs12/$EXT/pkcs12util  $DIST/utils
+	# Now copy the common platform independent files
+	cp -p $INST_ORIG/Support_Files/Anonymous.sft $DIST/ini
+	cp -p $INST_ORIG/Support_Files/Token1.sft $DIST/ini/TOKEN1.SFT
+	cp -p $INST_ORIG/Java/ckit.jar $DIST/java
+	cp -p $INST_ORIG/Java/arjca.jar $DIST/java
+	cp -p $INST_ORIG/Java/arjca.conf $DIST/java
+	cp -p $INST_ORIG/Linux_Support_Files/sadaptor.ini $DIST/ini
+	cp -p $INST_ORIG/Linux_Support_Files/readme $DIST/
+	cp -p $INST_ORIG/Linux_Support_Files/license.txt $DIST/
+	cp -p $INST_ORIG/Linux_Support_Files/install_ckit $DIST
+	chmod u+x $DIST/install_ckit
+	cp -p $INST_ORIG/Linux_Support_Files/uninstall_ckit $DIST
+	chmod u+x $DIST/uninstall_ckit
+	cp -r $DIST/../../include $DIST
+	/bin/rm $DIST/include/vssver.scc
+	/bin/rm $DIST/include/ar_callb.h
+	/bin/rm $DIST/include/pkcs_int.h
+	/bin/rm $DIST/include/pkcsintf.h
+	/bin/rm $DIST/include/pkcsintt.h
+	exit;
+fi
+
+#-------------------------------------------------------------------------
+# Compile debug, release or clean files 
+#-------------------------------------------------------------------------
+if (test "$1" = "debug") || (test "$1" = "d") || (test "$1" = "release") || (test "$1" = "r") || (test "$1" = "debug64") || (test "$1" = "d64") || (test "$1" = "release64") || (test "$1" = "r64") then
+	rm -f  arckit$CKITVER-$PLATFORM.tar.gz  
+	cd dev/extlibs/unix
+	gmake -f makefile			$ARG || exit 1;
+	cd ../../..
+	gmake -f dev/arcard/makefile		$ARG || exit 1;
+	gmake -f dev/rsa_prov/makefile		$ARG || exit 1;
+	gmake -f dev/simcard/makefile		$ARG || exit 1;	
+	gmake -f dev/jvcard/makefile		$ARG || exit 1;	
+	gmake -f dev/x509lib/makefile		$ARG || exit 1;
+	gmake -f dev/cypkcs11/makefile		$ARG || exit 1;
+	gmake -f dev/readers/pcsc/makefile	$ARG || exit 1;
+	gmake -f dev/sadaptor/makefile		$ARG || exit 1;
+	gmake -f dev/asn1/makefile			$ARG || exit 1;
+	gmake -f dev/x509dll/makefile		$ARG || exit 1;
+	gmake -f dev/samples/phl/makefile	$ARG || exit 1;
+	gmake -f dev/pkcs107lib/makefile	$ARG || exit 1;
+	gmake -f dev/pkcs12lib/makefile		$ARG || exit 1;
+	gmake -f dev/obj_ids/makefile		$ARG || exit 1;
+	gmake -f dev/pkcs107dll/makefile	$ARG || exit 1;
+	gmake -f dev/pkcs12dll/makefile		$ARG || exit 1;
+	gmake -f dev/ckitlic/makefile       $ARG || exit 1;
+	gmake -f dev/ar_jpk11/makefile		$ARG || exit 1;
+	gmake -f dev/samples/pkcs12/makefile $ARG || exit 1;
+	echo "--------- End of [$EXT] [$ARG] of CryptoKit ---------"
+fi
+
+#-------------------------------------------------------------------------
+# Compile the test programs and copy them to test dist directory
+#-------------------------------------------------------------------------
+if (test "$2" = "test") || (test "$2" = "t") || (test "$2" = "clean") || (test "$2" = "c"); then
+	gmake -f tests/functionality/tservice/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test2/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/t_cons/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test1/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test3/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test4/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test5/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test6/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test7/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test8/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test9/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test10/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test11/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test12/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test13/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test14/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test15/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test16/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test17/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test18/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test20/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test21/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/test22/makefile	$ARG || exit 1;
+	#gmake -f tests/functionality/pkcs_test/makefile	$ARG || exit 1;
+	gmake -f tests/functionality/t_des_stream/makefile	$ARG || exit 1;
+	echo "--------- End of [$EXT] [$ARG] of tests ---------"
+fi
+
+#-------------------------------------------------------------------------
+# Copy the tests to dist directory
+#-------------------------------------------------------------------------
+if (test "$2" = "test") || (test "$2" = "t"); then	
+	mkdir -p tests/functionality/dist/$EXT;
+	mkdir -p tests/functionality/dist/$EXT/d_slots;
+	mkdir -p tests/functionality/dist/$EXT/old_ckit;
+	cp tests/functionality/test1/$EXT/test1		tests/functionality/dist/$EXT;
+	cp tests/functionality/test2/$EXT/test2		tests/functionality/dist/$EXT;
+	cp tests/functionality/test3/$EXT/test3		tests/functionality/dist/$EXT;
+	cp tests/functionality/test4/$EXT/test4		tests/functionality/dist/$EXT;
+	cp tests/functionality/test4/pub128		tests/functionality/dist/$EXT;
+	cp tests/functionality/test4/priv128		tests/functionality/dist/$EXT;
+	cp tests/functionality/test4/pub256		tests/functionality/dist/$EXT;
+	cp tests/functionality/test4/priv256		tests/functionality/dist/$EXT;
+	cp tests/functionality/test4/pub384		tests/functionality/dist/$EXT;
+	cp tests/functionality/test4/priv384		tests/functionality/dist/$EXT;
+	cp tests/functionality/test4/pub512		tests/functionality/dist/$EXT;
+	cp tests/functionality/test4/priv512		tests/functionality/dist/$EXT;
+	cp tests/functionality/test5/$EXT/test5		tests/functionality/dist/$EXT;
+	cp tests/functionality/test6/$EXT/test6		tests/functionality/dist/$EXT;
+	cp tests/functionality/test7/$EXT/test7		tests/functionality/dist/$EXT;
+	cp tests/functionality/test8/$EXT/test8		tests/functionality/dist/$EXT;
+	cp tests/functionality/test8/largefile		tests/functionality/dist/$EXT;
+	cp tests/functionality/test9/$EXT/test9		tests/functionality/dist/$EXT;
+	cp tests/functionality/test10/$EXT/test10	tests/functionality/dist/$EXT;
+	cp tests/functionality/test11/$EXT/test11	tests/functionality/dist/$EXT;
+	cp tests/functionality/test12/$EXT/test12	tests/functionality/dist/$EXT;
+	cp tests/functionality/test13/$EXT/test13	tests/functionality/dist/$EXT;
+	cp tests/functionality/test14/$EXT/test14	tests/functionality/dist/$EXT;
+	cp tests/functionality/test15/$EXT/test15	tests/functionality/dist/$EXT;
+	cp tests/functionality/test16/$EXT/test16	tests/functionality/dist/$EXT;
+	cp tests/functionality/test17/$EXT/test17	tests/functionality/dist/$EXT;
+	cp tests/functionality/test18/$EXT/test18	tests/functionality/dist/$EXT;
+	cp tests/functionality/test20/$EXT/test20	tests/functionality/dist/$EXT;
+	cp -r tests/functionality/test20/d_slots/	tests/functionality/dist/$EXT;
+	cp tests/functionality/test21/$EXT/test21	tests/functionality/dist/$EXT;
+	cp tests/functionality/test22/$EXT/test22	tests/functionality/dist/$EXT;
+	cp tests/functionality/test22/pubEC256		tests/functionality/dist/$EXT;
+	cp tests/functionality/test22/privEC256		tests/functionality/dist/$EXT;
+	cp tests/functionality/test22/pubEC384		tests/functionality/dist/$EXT;
+	cp tests/functionality/test22/privEC384		tests/functionality/dist/$EXT;
+	cp tests/functionality/test22/pubEC521		tests/functionality/dist/$EXT;
+	cp tests/functionality/test22/privEC521		tests/functionality/dist/$EXT;
+	#cp tests/functionality/pkcs_test/$EXT/pkcs_test tests/functionality/dist/$EXT;
+	cp tests/functionality/t_cons/$EXT/t_cons	tests/functionality/dist/$EXT;
+	cp tests/functionality/t_des_stream/$EXT/t_des_stream	tests/functionality/dist/$EXT;
+	cp -r tests/functionality/t_des_stream/old_ckit/	tests/functionality/dist/$EXT;
+	echo "--------- Tests copied to [tests/functionality/dist/$EXT] directory ---------"
+fi
+
+
+

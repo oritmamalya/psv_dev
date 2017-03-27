@@ -1,0 +1,250 @@
+#-------------------------------------------------------------------------
+# Set Default values
+#-------------------------------------------------------------------------
+VERSION=4.9.0
+CL=gcc
+CLP=gcc
+AR=ar 			# archive utility, for creating static libs
+ARDEFS=vrus 		# ar parameters
+INSTALL=/lib
+
+#-------------------------------------------------------------------------
+# Set include directories
+#-------------------------------------------------------------------------
+MAIN_INCLUDE=$(PKCS_ROOT)/include
+ARCARD_INCLUDE=$(PKCS_ROOT)/dev/arcard/include
+ARGUI_INCLUDE=$(PKCS_ROOT)/dev/argui/include
+ASN1_INCLUDE=$(PKCS_ROOT)/dev/asn1/include
+CKITLIC_INCLUDE=$(PKCS_ROOT)/dev/ckitlic/include
+COMMON_INCLUDE=$(PKCS_ROOT)/dev/common/include
+CSAFE_INCLUDE=$(PKCS_ROOT)/dev/safe/include
+CYPKCS11_INCLUDE=$(PKCS_ROOT)/dev/cypkcs11/include
+HASHALG_INCLUDE=$(PKCS_ROOT)/dev/hashalg/include
+PCSC_INCLUDE=$(PKCS_ROOT)/dev/readers/pcsc/include
+PKCS107LIB_INCLUDE=$(PKCS_ROOT)/dev/pkcs107lib/include
+PKCS12DLL_INCLUDE=$(PKCS_ROOT)/dev/pkcs12dll/include
+PKCS12LIB_INCLUDE=$(PKCS_ROOT)/dev/pkcs12lib/include
+RSA_PROV_INCLUDE=$(PKCS_ROOT)/dev/rsa_prov/include
+SADAPTOR_INCLUDE=$(PKCS_ROOT)/dev/sadaptor/include
+SIMCARD_INCLUDE=$(PKCS_ROOT)/dev/simcard/include
+JVCARD_INCLUDE=$(PKCS_ROOT)/dev/jvcard/include
+SYMALG_INCLUDE=$(PKCS_ROOT)/dev/symalg/include
+X509DLL_INCLUDE=$(PKCS_ROOT)/dev/x509dll/include
+X509LIB_INCLUDE=$(PKCS_ROOT)/dev/x509lib/include
+
+FROMARKIT=$(PKCS_ROOT)/dev/extlibs/unix
+
+#-------------------------------------------------------------------------
+# Set source directories
+#-------------------------------------------------------------------------
+ARCARD_SOURCE=$(PKCS_ROOT)/dev/arcard/src
+ASN1_SOURCE=$(PKCS_ROOT)/dev/asn1/src
+COMMON_SOURCE=$(PKCS_ROOT)/dev/common/src
+CYPKCS11_SOURCE=$(PKCS_ROOT)/dev/cypkcs11/src
+HASHALG_SOURCE=$(PKCS_ROOT)/dev/hashalg/src
+OBJ_IDS_SOURCE=$(PKCS_ROOT)/dev/obj_ids/src
+PCSC_SOURCE=$(PKCS_ROOT)/dev/readers/pcsc/src
+RSA_PROV_SOURCE=$(PKCS_ROOT)/dev/rsa_prov/src
+SADAPTOR_SOURCE=$(PKCS_ROOT)/dev/sadaptor/src
+SYMALG_SOURCE=$(PKCS_ROOT)/dev/symalg/src
+SIMCARD_SOURCE=$(PKCS_ROOT)/dev/simcard/src
+JVCARD_SOURCE=$(PKCS_ROOT)/dev/jvcard/src
+
+#-------------------------------------------------------------------------
+# Set lib directories
+#-------------------------------------------------------------------------
+ARCARD_LIB=$(PKCS_ROOT)/dev/arcard/$(DBG)
+SADAPTOR_LIB=$(PKCS_ROOT)/dev/sadaptor/$(DBG)
+X509_LIB=$(PKCS_ROOT)/dev/x509dll/$(DBG)
+RSA_PROV_LIB=$(PKCS_ROOT)/dev/rsa_prov/$(DBG)
+OBJ_IDS_LIB=$(PKCS_ROOT)/dev/obj_ids/$(DBG)
+SIMCARD_LIB=$(PKCS_ROOT)/dev/simcard/$(DBG)
+JVCARD_LIB=$(PKCS_ROOT)/dev/jvcard/$(DBG)
+
+#-------------------------------------------------------------------------
+# Set test directories
+#-------------------------------------------------------------------------
+TEST_DIR=$(PKCS_ROOT)/tests/functionality/$(TEST)
+TSERV_DIR=$(PKCS_ROOT)/tests/functionality/tservice
+TSERV_LIB=$(PKCS_ROOT)/tests/functionality/tservice/$(DBG)
+OUT=$(PKCS_ROOT)/tests/functionality/$(TEST)/
+TEST_GEN_LIB=$(PKCS_ROOT)/tests/functionality/test2/$(DBG)/test_gen.o
+
+#-------------------------------------------------------------------------
+# Debug or release flags
+#-------------------------------------------------------------------------
+ifeq ($(AR_BUILD),debug)
+ifeq ($(IS64),yes)
+	DBG=debug64
+	OPT=-c -g -fPIC
+else
+	DBG=debug
+	OPT=-c -g
+endif
+
+else
+ifeq ($(IS64),yes)
+	DBG=release64
+	OPT=-c -fPIC # optimize code
+else
+	DBG=release
+	OPT=-c -O3 # optimize code
+endif
+endif
+
+OBJ_DIR=$(OUT)$(DBG)
+
+#-------------------------------------------------------------------------
+# Extended or Basic version
+#-------------------------------------------------------------------------
+ifeq ($(AR_VERSION),extended)
+	VER=AR_VER_EXTENDED
+	_VER_=extended
+else
+	VER=AR_VER_BASIC
+	_VER_=basic
+endif
+
+#-------------------------------------------------------------------------
+# HP-UX
+#-------------------------------------------------------------------------
+ifeq ($(shell uname), HP-UX)
+	GENERAL_DEFS=-fPIC -DAR_PLATFORM=AR_HPUX -DAR_ON_HPUX -DAR_BIG_ENDIAN -DUNIX -D__GCC__ -D$(VER)
+	COMP_FLAGS_SHARED=$(GENERAL_DEFS)
+	COMP_FLAGS_STATIC=$(GENERAL_DEFS)
+	LINK_FLAGS_SHARED=-G -z -b -L/prod/local/lib/gcc-lib/hppa1.1-hp-hpux11.00/3.0 -L/prod/local/lib/gcc-lib -L/usr/local/lib/gcc-lib/hppa1.1-hp-hpux11.00/3.0 -L/usr/ccs/bin -L/usr/ccs/lib -L/opt/langtools/lib -L/prod/local/lib -L/usr/local/lib -lgcc
+	LINK_FLAGS_STATIC=-G
+	LINK_FLAGS_EXEC=$(LINK_FLAGS_STATIC)
+	JDK=/opt/java1.3
+	ARJPK_INCLUDE=-I$(JDK)/include -I$(JDK)/include/hp-ux -I$(MAIN_INCLUDE)
+	ARJPK_DEFINES=-DAR_PLATFORM=6 -D_SMALL_STACK
+	CC=$(CL) -fPIC
+	EXT=sl
+	LD=ld
+	LD_EXEC=$(LD)
+	C++LIBS=
+endif
+
+#-------------------------------------------------------------------------
+# SunOS/SunOS64
+#-------------------------------------------------------------------------
+ifeq ($(shell uname), SunOS)
+	ifeq ($(IS64),yes)
+		GENERAL_DEFS=-DAR_PLATFORM=AR_SOLARIS64 -DAR_ON_SOLARIS64 -DAR_BIG_ENDIAN -DUNIX -D__GCC__ -D$(VER)
+		COMP_FLAGS_SHARED=-m64 $(GENERAL_DEFS)
+		COMP_FLAGS_STATIC=-m64 $(GENERAL_DEFS)
+		LINK_FLAGS_SHARED=-m64 -G -fPIC
+		LINK_FLAGS_STATIC=-m64 -G
+		LINK_FLAGS_EXEC=-m64 -fPIC   
+		JDK=/usr/java
+		CC=$(CL) -fPIC
+		ARJPK_INCLUDE=-I$(JDK)/include -I$(JDK)/include/solaris -I$(MAIN_INCLUDE)
+		ARJPK_DEFINES=-DAR_PLATFORM=AR_SOLARIS64 -DAR_ON_SOLARIS64  
+		LIBS=-lsocket -lnsl
+		EXT=so
+		LD=gcc
+		LD_EXEC=g++
+		C++LIBS=-ldl -lstdc++
+		ARDEFS=vq
+	else
+		GENERAL_DEFS=-DAR_PLATFORM=AR_SOLARIS -DAR_ON_SOLARIS -DAR_BIG_ENDIAN -DUNIX -D__GCC__ -D$(VER)
+		COMP_FLAGS_SHARED=$(GENERAL_DEFS)
+		COMP_FLAGS_STATIC=$(GENERAL_DEFS)
+		LINK_FLAGS_SHARED=-G
+		LINK_FLAGS_STATIC=-G
+		LINK_FLAGS_EXEC=
+		JDK=/usr/java
+		CC=$(CL) -fPIC
+		ARJPK_INCLUDE=-I$(JDK)/include -I$(JDK)/include/solaris -I$(MAIN_INCLUDE)
+		ARJPK_DEFINES=-DAR_PLATFORM=AR_SOLARIS -DAR_ON_SOLARIS  
+		CC=$(CL) $(OPT)
+		LIBS=-lsocket -lnsl
+		EXT=so
+		LD=gcc
+		LD_EXEC=g++
+		C++LIBS=-ldl -lstdc++
+		ARDEFS=vq
+	endif
+endif
+
+#-------------------------------------------------------------------------
+# Linux/Linux64
+#-------------------------------------------------------------------------
+ifeq ($(shell uname), Linux)
+	ifeq ($(IS64),yes)
+		GENERAL_DEFS=-DAR_PLATFORM=AR_LINUX64 -DAR_ON_LINUX64 -DUNIX -DLINUX64 -DAR_LITTLE_ENDIAN -D__LINUX64__ -D__GCC__ -D$(VER)
+		COMP_FLAGS_SHARED=-m64 -fPIC $(GENERAL_DEFS)
+		COMP_FLAGS_STATIC=-m64 -fPIC $(GENERAL_DEFS)
+		LINK_FLAGS_SHARED=-m64 -fPIC -shared -Xlinker -Bsymbolic -Xlinker --allow-shlib-undefined
+		LINK_FLAGS_STATIC=
+		LINK_FLAGS_EXEC=
+		EXT=so
+		JDK=/usr/lib/jvm/java-6-openjdk-amd64/
+		LD=/usr/bin/gcc # override the standard define
+		LD_EXEC=$(LD)
+		C++LIBS=-ldl -lstdc++ -lpthread
+		ARJPK_INCLUDE=-I$(JDK)/include -I$(JDK)/include/linux -I$(MAIN_INCLUDE)
+		ARJPK_DEFINES = -DAR_PLATFORM=AR_LINUX64 -DAR_ON_LINUX64 -DNO_AUTH
+		EXTRA_LIBS=-ldl -lc	
+	else	
+		GENERAL_DEFS=-DAR_PLATFORM=AR_LINUX -DAR_ON_LINUX -DUNIX -DLINUX -DAR_LITTLE_ENDIAN -D__LINUX__ -D__GCC__ -D$(VER)
+		COMP_FLAGS_SHARED=-fPIC $(GENERAL_DEFS)
+		COMP_FLAGS_STATIC=$(GENERAL_DEFS)
+		LINK_FLAGS_SHARED=-shared -Xlinker -Bsymbolic -Xlinker --allow-shlib-undefined
+		LINK_FLAGS_STATIC=
+		LINK_FLAGS_EXEC=
+		EXT=so
+		JDK=/usr/java/
+		LD=/usr/bin/gcc # override the standard define
+		LD_EXEC=$(LD)
+		C++LIBS=-lstdc++ -ldl -lpthread
+		ARJPK_INCLUDE=-I$(JDK)/include -I$(JDK)/include/linux -I$(MAIN_INCLUDE)
+		ARJPK_DEFINES = -DAR_PLATFORM=AR_LINUX -DAR_ON_LINUX -DNO_AUTH
+		EXTRA_LIBS=-ldl -lc
+	endif
+endif
+
+#-------------------------------------------------------------------------
+# AIX/AIX64
+#-------------------------------------------------------------------------
+ifeq ($(shell uname), AIX)
+	ifeq ($(IS64),yes)
+		AR=ar -X 64
+		GENERAL_DEFS=-DAR_PLATFORM=AR_AIX64 -DAR_ON_AIX64 -DAR_BIG_ENDIAN -DUNIX -D__GCC__ -D$(VER) -maix64
+		JDK=/usr/java14
+		ARJPK_INCLUDE=-I$(JDK)/include -I$(JDK)/include/aix -I$(MAIN_INCLUDE)
+		ARJPK_DEFINES=-DAR_PLATFORM=AR_AIX64 -DAR_ON_AIX64 
+		COMP_FLAGS_SHARED=-fPIC $(GENERAL_DEFS) 
+		COMP_FLAGS_STATIC=$(GENERAL_DEFS) 
+		LINK_FLAGS_SHARED=-shared -Xlinker -brtl -Xlinker -G -maix64
+		LINK_FLAGS_STATIC=-Xlinker -brtl -maix64
+		LINK_FLAGS_EXEC=$(LINK_FLAGS_STATIC)	
+		CC=$(CL) $(OPT) 
+		LIBS=
+		EXT=so
+		LD=gcc
+		LD_EXEC=$(LD)
+		C++LIBS=-L/opt/usr/local/lib -lpthread -Wl,-bstatic -lstdc++ -Wl,-bdynamic -static-libgcc
+		EXTRA_LIBS=-lpthread
+		ARDEFS=vru
+	else
+		GENERAL_DEFS=-DAR_PLATFORM=AR_AIX -DAR_ON_AIX -DAR_BIG_ENDIAN -DUNIX -D__GCC__ -D$(VER)
+		JDK=/usr/java14
+		ARJPK_INCLUDE=-I$(JDK)/include -I$(JDK)/include/aix -I$(MAIN_INCLUDE)
+		ARJPK_DEFINES=-DAR_PLATFORM=AR_AIX -DAR_ON_AIX
+		COMP_FLAGS_SHARED=-fPIC $(GENERAL_DEFS) 
+		COMP_FLAGS_STATIC=$(GENERAL_DEFS) 
+		LINK_FLAGS_SHARED=-shared -Xlinker -brtl -Xlinker -G 
+		LINK_FLAGS_STATIC=-Xlinker -brtl 
+		LINK_FLAGS_EXEC=$(LINK_FLAGS_STATIC)	
+		CC=$(CL) $(OPT) 
+		LIBS=
+		EXT=so
+		LD=gcc
+		LD_EXEC=$(LD)
+		C++LIBS=-L/opt/usr/local/lib -lpthread -Wl,-bstatic -lstdc++ -Wl,-bdynamic -static-libgcc
+		EXTRA_LIBS=-lpthread
+	endif
+endif
+
+

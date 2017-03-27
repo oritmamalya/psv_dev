@@ -1,0 +1,143 @@
+#common.w32
+ 
+!ifndef PROJ_DIR
+!ERROR you must define the path to the "proj" (PROJ_DIR) folder that the project you intend to compile is under
+!endif
+ 
+MSC=$(VC10_ROOT)\vc
+
+# Set compile and link utils 
+!ifdef WIN64
+!MESSAGE compiling 64bit
+CL=$(MSC)\bin\x86_amd64\cl.exe
+RC=$(SDK10_ROOT)\bin\x64\rc.exe
+BSC=$(MSC)\bin\bscmake.exe
+LINK=$(MSC)\bin\link.exe
+LIB=$(MSC)\bin\lib.exe
+MC=$(SDK10_ROOT)\bin\x64\mc.exe
+!else
+!MESSAGE compiling 32bit
+CL=$(MSC)\bin\cl.exe
+RC=$(SDK10_ROOT)\bin\rc.exe
+BSC=$(MSC)\bin\bscmake.exe
+LINK=$(MSC)\bin\link.exe
+LIB=$(MSC)\bin\lib.exe
+MC=$(SDK10_ROOT)\bin\mc.exe
+!endif
+
+# Set Lib directories
+!ifdef WIN64
+SDK_LIB=$(SDK10_ROOT)\lib\x64
+MSC_LIB=$(MSC)\lib\amd64
+MSC_MFC_LIB=$(MSC)\atlmfc\lib\amd64
+!else
+SDK_LIB=$(SDK10_ROOT)\lib
+MSC_LIB=$(MSC)\lib
+MSC_MFC_LIB=$(MSC)\atlmfc\lib
+!endif
+
+# Set Output directiry
+!ifdef WIN64
+!ifdef RELEASE
+TYPE_DIR=win64R
+!else
+TYPE_DIR=win64D
+!endif
+!else
+!ifdef RELEASE
+TYPE_DIR=win32R
+!else
+TYPE_DIR=win32D
+!endif
+!endif
+
+# Set common include directories
+MFC_INCLUDE=$(MSC)\atlmfc\include
+MAIN_INCLUDE=$(PROJ_DIR)\pkcs11\include
+SDK_INCLUDE=$(SDK10_ROOT)\include
+MSC_INCLUDE=$(MSC)\include
+CNG_INCLUDE=$(CNG_ROOT)\include
+COMMON_INCLUDE=$(PROJ_DIR)\pkcs11\dev\common\include
+CYPKCS11_INCLUDE=$(PROJ_DIR)\pkcs11\dev\cypkcs11\include
+HASHALG_INCLUDE=$(PROJ_DIR)\pkcs11\dev\hashalg\include
+SYMALG_INCLUDE=$(PROJ_DIR)\pkcs11\dev\symalg\include
+ARCARD_INCLUDE=$(PROJ_DIR)\pkcs11\dev\arcard\include
+SIMCARD_INCLUDE=$(PROJ_DIR)\pkcs11\dev\simcard\include
+JVCARD_INCLUDE=$(PROJ_DIR)\pkcs11\dev\jvcard\include
+CSAFE_INCLUDE=$(PROJ_DIR)\pkcs11\dev\safe\include
+ARGUI_INCLUDE=$(PROJ_DIR)\pkcs11\dev\argui\include
+BIOMETRIC_INCLUDE=$(PROJ_DIR)\pkcs11\dev\arbiomoc\include
+ARSPE_INCLUDE=$(PROJ_DIR)\pkcs11\dev\arspe\include
+ASN1_INCLUDE=$(PROJ_DIR)\pkcs11\dev\asn1\include
+X509LIB_INCLUDE=$(PROJ_DIR)\pkcs11\dev\x509lib\include
+X509DLL_INCLUDE=$(PROJ_DIR)\pkcs11\dev\x509Dll\include
+ARCLTSRV_INCLUDE=$(PROJ_DIR)\pkcs11\dev\arcltsrv\include
+CSP_INCLUDE=$(PROJ_DIR)\pkcs11\dev\arcsp\include
+SADAPTOR_INCLUDE=$(PROJ_DIR)\pkcs11\dev\sadaptor\include
+ARGENIEDLL_INCLUDE=$(PROJ_DIR)\pkcs11\dev\argeniedll\include
+PKCS12LIB_INCLUDE=$(PROJ_DIR)\pkcs11\dev\pkcs12lib\include
+PKCS12_INCLUDE=$(PROJ_DIR)\pkcs11\dev\pkcs12dll\include
+SAPI_INCLUDE=$(PROJ_DIR)\PKCS11\dev\extlibs\sapi\include
+LIC_INCLUDE=$(PROJ_DIR)\pkcs11\dev\ckitlic\include
+PKCS107LIB_INCLUDE=$(PROJ_DIR)\pkcs11\dev\pkcs107lib\include
+RSA_PROV_INCLUDE=$(PROJ_DIR)\pkcs11\dev\rsa_prov\include
+PCSC_INCLUDE=$(PROJ_DIR)\pkcs11\dev\readers\pcsc\include
+CTAP_INCLUDE=$(PROJ_DIR)\pkcs11\dev\readers\ctap\include
+PROP_INCLUDE=$(PROJ_DIR)\pkcs11\dev\readers\prop\include
+JAVA_INCLUDE=$(JAVA_ROOT)\include
+JAVA_W32_INCLUDE=$(JAVA_ROOT)\include\win32
+PRECISE_INCLUDE=$(PROJ_DIR)\pkcs11\dev\extlibs\precise\include
+
+# Set common source directories
+COMMON_SOURCE=$(PROJ_DIR)\pkcs11\dev\common\src
+CYPKCS11_SOURCE=$(PROJ_DIR)\pkcs11\dev\cypkcs11\src
+HASHALG_SOURCE=$(PROJ_DIR)\pkcs11\dev\hashalg\src
+SYMALG_SOURCE=$(PROJ_DIR)\pkcs11\dev\symalg\src
+OBJIDS_SOURCE=$(PROJ_DIR)\pkcs11\dev\obj_ids\src
+X509LIB_SOURCE=$(PROJ_DIR)\pkcs11\dev\x509lib\src
+BIOMETRIC_SOURCE=$(PROJ_DIR)\pkcs11\dev\arbiomoc\src 
+SIMCARD_SOURCE=$(PROJ_DIR)\pkcs11\dev\simcard\src
+COMMON_RESOURCE=$(PROJ_DIR)\pkcs11\dev\common\res
+
+# Set common lib directories
+SADAPTOR_LIB=$(PROJ_DIR)\pkcs11\dev\sadaptor\$(TYPE_DIR)
+OBJ_IDS_LIB=$(PROJ_DIR)\pkcs11\dev\obj_ids\$(TYPE_DIR)
+ASN1_LIB=$(PROJ_DIR)\pkcs11\dev\asn1\$(TYPE_DIR)
+X509LIB_LIB=$(PROJ_DIR)\pkcs11\dev\x509lib\$(TYPE_DIR)
+X509DLL_LIB=$(PROJ_DIR)\pkcs11\dev\x509dll\$(TYPE_DIR)
+ARGENIEDLL_LIB=$(PROJ_DIR)\pkcs11\dev\argeniedll\$(TYPE_DIR)
+PKCS107LIB_LIB=$(PROJ_DIR)\pkcs11\dev\pkcs107Lib\$(TYPE_DIR)
+RSA_PROV_LIB=$(PROJ_DIR)\pkcs11\dev\rsa_prov\$(TYPE_DIR)
+LIC_LIB=$(PROJ_DIR)\pkcs11\dev\ckitlic\$(TYPE_DIR)
+ARCARD_LIB=$(PROJ_DIR)\pkcs11\dev\arcard\$(TYPE_DIR)
+SIMCARD_LIB=$(PROJ_DIR)\pkcs11\dev\simcard\$(TYPE_DIR)
+JVCARD_LIB=$(PROJ_DIR)\pkcs11\dev\jvcard\$(TYPE_DIR)
+PKCS12LIB_LIB=$(PROJ_DIR)\pkcs11\dev\pkcs12lib\$(TYPE_DIR)
+PKCS12DLL_LIB=$(PROJ_DIR)\pkcs11\dev\pkcs12dll\$(TYPE_DIR)
+SAPI_LIB=$(PROJ_DIR)\PKCS11\dev\extlibs\sapi\lib
+PCSC_LIB=$(PROJ_DIR)\pkcs11\dev\readers\pcsc\$(TYPE_DIR)
+CTAP_LIB=$(PROJ_DIR)\pkcs11\dev\readers\ctap\$(TYPE_DIR)
+PSAF_LIB=$(PROJ_DIR)\pkcs11\dev\readers\psaf\$(TYPE_DIR)
+PROP_LIB=$(PROJ_DIR)\pkcs11\dev\readers\prop\$(TYPE_DIR)
+EXTLIBS_LIB=$(PROJ_DIR)\pkcs11\dev\extlibs
+EXT64_LIB=$(PROJ_DIR)\pkcs11\dev\extlibs\win64
+!ifdef WIN64
+PRECISE_LIB=$(PROJ_DIR)\pkcs11\dev\extlibs\precise\win64
+!else
+PRECISE_LIB=$(PROJ_DIR)\pkcs11\dev\extlibs\precise\win32
+!endif
+
+
+# Set compiler flags
+WIN_LIBS = kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib 
+WIN64_CL_FLAGS = /D "_WIN32" /D "_WIN64" /D "WIN64" /D "_WINDOWS" /D "_MBCS" /W3 /wd4996 /wd4267 /nologo /c /errorReport:prompt /Fd"$(INTDIR)\\"
+WIN32_CL_FLAGS = /D "_WIN32" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /W3 /wd4996 /wd4267 /nologo /c /errorReport:prompt /Fd"$(INTDIR)\\"
+BSC_FLAGS = /nologo
+
+!ifdef RELEASE
+WIN64_CL_FLAGS = $(WIN64_CL_FLAGS) /O2 /Ob1 /MT /GF /FD /D "NDEBUG"
+WIN32_CL_FLAGS = $(WIN32_CL_FLAGS) /O2 /Ob1 /MT /GF /FD /D "NDEBUG"
+!else
+WIN64_CL_FLAGS = $(WIN64_CL_FLAGS) /Od /MTd /Gm /RTC1 /Zi /D "_DEBUG" /FR"$(INTDIR)\\"
+WIN32_CL_FLAGS = $(WIN32_CL_FLAGS) /Od /MTd /Gm /RTC1 /Zi /D "_DEBUG" /FR"$(INTDIR)\\"
+!endif

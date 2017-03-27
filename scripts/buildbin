@@ -1,0 +1,81 @@
+#!/usr/bin/tcsh
+
+if ( $#argv <= 0 || $#argv >= 1 ) then
+USAGE:
+        echo "\n Usage : buildbin.lnx [Dest. path]\n"
+        echo " Dest. path - where to copy the version products to."
+        exit
+endif
+
+# execution will stop here if 'PKCS_ROOT' environment parameter is not set !
+echo "\n NOTE: 'PKCS_ROOT' is defined as '$PKCS_ROOT' proceed (y/N) ?"
+set ans=$<
+if (y != $ans) then
+exit
+endif
+unset ans
+
+# execution will abort if 'Dest. path' parameter is not confirmed !
+echo "\n NOTE: Destination path is defined as '$argv[1]'.\n All the contents will be overwritten !   proceed (y/N) ?"
+set ans=$<
+if (y != $ans) then
+exit
+else
+mkdir -p $argv[1]
+rm -f $argv[1]\*.*
+endif
+unset ans
+
+:step4
+set PROJ_DIR=$PKCS_ROOT
+set BIN_DIR=$1
+
+
+# ----------------- fetch all shared object ----------------------------------------------------
+copy %PROJ_DIR%\pkcs11\dev\sadaptor\linuxr\libsadaptor.so		%BIN_DIR%\extended\
+copy %PROJ_DIR%\pkcs11\dev\sadaptor\linuxr\libsadaptor.so		%BIN_DIR%\basic\
+copy %PROJ_DIR%\pkcs11\dev\obj_ids\linuxr\libobj_ids.so			%BIN_DIR%\extended\
+copy %PROJ_DIR%\pkcs11\dev\obj_ids\linuxr\libobj_ids.so			%BIN_DIR%\basic\
+copy %PROJ_DIR%\pkcs11\dev\ar_jpk11\linuxr\libar_jpk11.so		%BIN_DIR%\extended\
+copy %PROJ_DIR%\pkcs11\dev\ar_jpk11\linuxr\libar_jpk11.so		%BIN_DIR%\basic\
+copy %PROJ_DIR%\pkcs11\dev\x509dll\linuxr\libckx509.so			%BIN_DIR%\extended\
+copy %PROJ_DIR%\pkcs11\dev\x509dll\linuxr\libckx509.so			%BIN_DIR%\basic\
+
+# ----------------- Extended Vs. Basic -------------------------------------------------
+copy %PROJ_DIR%\pkcs11\dev\cypkcs11\extended\linuxr\libarpkcs11.so	%BIN_DIR%\extended\
+copy n:\proj\pkcs11\install\utils\support_files\token1.sft		%BIN_DIR%\extended\
+
+copy %PROJ_DIR%\pkcs11\dev\cypkcs11\basic\linuxr\libarpkcs11.so		%BIN_DIR%\basic\
+copy n:\proj\pkcs11\install\utils\support_files\token1b.sft		%BIN_DIR%\basic\token1.sft
+
+
+# ----------------- ect. ect. -------------------------------------------------
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/readme		%BIN_DIR%\extended\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/install.csh	%BIN_DIR%\extended\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/uninstall.csh	%BIN_DIR%\extended\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/pcscd.sh		%BIN_DIR%\extended\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/pcscd		%BIN_DIR%\extended\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/arChangePass	%BIN_DIR%\extended\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/libpcsclite.so	%BIN_DIR%\extended\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/libcryptoidentity.so	%BIN_DIR%\extended\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/reader.conf	%BIN_DIR%\extended\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/sadaptor.ini	%BIN_DIR%\extended\
+
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/readme		%BIN_DIR%\basic\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/install.csh	%BIN_DIR%\basic\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/uninstall.csh	%BIN_DIR%\basic\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/pcscd.sh		%BIN_DIR%\basic\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/pcscd		%BIN_DIR%\basic\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/arChangePass	%BIN_DIR%\basic\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/libpcsclite.so	%BIN_DIR%\basic\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/libcryptoidentity.so	%BIN_DIR%\basic\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/reader.conf	%BIN_DIR%\basic\
+copy /arl/n/proj/pkcs11/dist/dist3.4.0/linux/extended/sadaptor.ini	%BIN_DIR%\basic\
+
+# ----------------- include files --------------------------------------------
+copy %PROJ_DIR%\pkcs11\include\*.h					%BIN_DIR%\extended\include\
+copy %PROJ_DIR%\pkcs11\include\*.h					%BIN_DIR%\basic\include\
+
+# ----------------- bin\cryptokit\java ------------------------------------------------
+copy %PROJ_DIR%\pkcs11\dev\java\dist\ckit.jar				%BIN_DIR%\extended\
+copy %PROJ_DIR%\pkcs11\dev\java\dist\ckit.jar				%BIN_DIR%\basic\
