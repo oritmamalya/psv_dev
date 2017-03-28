@@ -16,4 +16,9 @@
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
 
+# Noramlized binary files
+makefile binary
+buildall binary
+common binary
+
 *.bat eol=crlf
