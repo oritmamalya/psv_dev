@@ -69,7 +69,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <PostBuildEvent>
-      <Command>copy .\debug\tst_ssl.exe ..\..\tests</Command>
+      <Command>copy .\debug\tst_ssl.exe ..\tests</Command>
     </PostBuildEvent>
     <Midl>
       <TypeLibraryName>.\Debug\tst_ssl.tlb</TypeLibraryName>
