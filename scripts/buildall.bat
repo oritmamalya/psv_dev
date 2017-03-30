@@ -1,6 +1,7 @@
 echo off
 rem -------------------- Check if PROJ directory exists -------------
-rem ------ This is new branch
+rem ----- this is merged branch
+
 if [%1]==[] goto step4
 if exist %1 goto step1
 echo Project directory (%1) does not exist- batch will abort
