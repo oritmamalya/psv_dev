@@ -24,7 +24,8 @@ int open_ssl_connection(int threadId, int NumOfIterations, char *ip, char *user1
 	int i=0;
 	int rc = 0;
 	void*	csv = NULL;
-
+	
+	// For loop comment
 	for(i;i<NumOfIterations+3;i++)
 	{
 
