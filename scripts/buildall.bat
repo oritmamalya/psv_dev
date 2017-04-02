@@ -1,6 +1,6 @@
 echo off
 rem -------------------- Check if PROJ directory exists -------------
-rem ----- this is merged branch Not any more
+rem ----- this is merged branch indeed!
 
 if [%1]==[] goto step4
 if exist %1 goto step1

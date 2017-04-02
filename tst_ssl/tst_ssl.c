@@ -28,7 +28,7 @@ int open_ssl_connection(int threadId, int NumOfIterations, char *ip, char *user1
 	// For loop commentAAA
 	for(i;i<NumOfIterations+3;i++)
 	{
-
+		// Checking i index
 		if (i%2 == 0)
 		{
 			//rc = csv_open_auth(csv, ip, user1, 0, MT_SSL_NOMEDIA, "", "");
