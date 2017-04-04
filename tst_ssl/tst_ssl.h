@@ -28,7 +28,7 @@ typedef struct _ThreadParams {
 	int numOfIterations;
 } ThreadParams;
 
-// AA
+// AA -- Moshe remark
 
 #endif
 
