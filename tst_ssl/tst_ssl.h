@@ -28,7 +28,7 @@ typedef struct _ThreadParams {
 	int numOfIterations;
 } ThreadParams;
 
-// AA - Orit Branch
+// AA - merged branch
 
 #endif
 
