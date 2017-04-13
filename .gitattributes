@@ -1,24 +1,127 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# Custom for Visual Studio
-*.cs     diff=csharp
+# Binary files should not be modified 
+*.1996 binary
+*.1997 binary
+*.1998 binary
+*.1999 binary
+*.2000 binary
+*.2001 binary
+*.2002 binary
+*.2003 binary
+*.2004 binary
+*.2005 binary
+*.2006 binary
+*.2007 binary
+*.ac binary
+*.am binary
+*.at binary
+*.bak binary
+*.bc binary
+*.BER binary
+*.bin binary
+*.bmp binary
+*.cer binary
+*.com binary
+*.CRT binary
+*.dec binary
+*.DER binary
+*.dll binary
+*.DLM binary
+*.doc binary
+*.enc binary
+*.env binary
+*.exe binary
+*.f binary
+*.f90 binary
+*.guess binary
+*.hpux10-cc binary
+*.html binary
+*.ico binary
+*.in binary
+*.inc binary
+*.info-1 binary
+*.jar binary
+*.jpg binary
+*.keystore binary
+*.lib binary
+*.m4 binary
+*.m4sh binary
+*.obj binary
+*.org binary
+*.p12 binary 
+*.pdn binary 
+*.pfx binary 
+*.pl binary
+*.pod binary
+*.pri binary 
+*.psd binary 
+*.RCT binary 
+*.sft binary 
+*.sh binary
+*.shared binary
+*.sig binary 
+*.sub binary
+*.test binary
+*.tex binary
+*.texi binary
+*.unsample binary
+*.xpo binary 
+*.xsl binary 
+*.zip binary 
+*sh binary
+bootstrap binary
+ChangeLog binary
+configure binary
+COPYING binary
+depcomp binary
+INSTALL binary
+makefile binary 
+missing binary
+mkstamp binary
+NEWS binary
+PLATFORMS binary
+stamp-mk binary
+stamp-vti binary
+testsuite binary
 
-# Standard to msysgit
-*.doc	 diff=astextplain
-*.DOC	 diff=astextplain
-*.docx diff=astextplain
-*.DOCX diff=astextplain
-*.dot  diff=astextplain
-*.DOT  diff=astextplain
-*.pdf  diff=astextplain
-*.PDF	 diff=astextplain
-*.rtf	 diff=astextplain
-*.RTF	 diff=astextplain
-
-# Noramlized binary files
-makefile binary
-buildall binary
-common binary
-
+# Noramlized text files to native line endings on checkout
+*.asm text eol=crlf
 *.bat eol=crlf
+*.c text eol=crlf
+*.clw text eol=crlf
+*.conf text eol=crlf
+*.cpp text eol=crlf
+*.CSR text eol=crlf
+*.def text eol=crlf
+*.dep text eol=crlf
+*.doc text eol=crlf
+*.dsp text eol=crlf
+*.DSW text eol=crlf
+*.h text eol=crlf
+*.hex text eol=crlf
+*.htm text eol=crlf
+*.html text eol=crlf
+*.icproj text  eol=crlf
+*.in text eol=crlf
+*.inf text eol=crlf
+*.ini text eol=crlf
+*.ism text eol=crlf
+*.java text eol=crlf
+*.log text eol=crlf
+*.MAK text eol=crlf
+*.mc text eol=crlf
+*.PK7 text eol=crlf
+*.rc text eol=crlf
+*.rc2 text eol=crlf
+*.rtf text eol=crlf
+*.s text eol=crlf
+*.scm text eol=crlf
+*.sln text eol=crlf
+*.txt text eol=crlf
+*.vcproj text eol=crlf
+*.vcxproj text eol=crlf
+*.w32 text eol=crlf
+*.user text eol=crlf
+*.filters text eol=crlf
