@@ -125,3 +125,8 @@ testsuite binary
 *.w32 text eol=crlf
 *.user text eol=crlf
 *.filters text eol=crlf
+
+# Custom for Visual Studio
+*.cs     diff=csharp
+*.c      diff=cpp	
+*.cpp      diff=cpp	
