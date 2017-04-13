@@ -1,4 +1,4 @@
-# Auto detect text files and perform LF normalization
+﻿# Auto detect text files and perform LF normalization
 * text=auto
 
 # Binary files should not be modified 
@@ -89,7 +89,6 @@ testsuite binary
 # Noramlized text files to native line endings on checkout
 *.asm text eol=crlf
 *.bat eol=crlf
-*.c text eol=crlf
 *.clw text eol=crlf
 *.conf text eol=crlf
 *.cpp text eol=crlf
