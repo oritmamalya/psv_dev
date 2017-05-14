@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "tst_ssl.h"
 
+// This is a remark in Orit branch
 
 ThreadParams *G_ThreadParamsArray;
 int G_this_client_threads;    // NUMBER OF THREADS
