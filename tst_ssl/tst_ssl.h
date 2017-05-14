@@ -15,6 +15,7 @@
 #define MULTI_DEFAULT_THREADS		1
 #define timeconst					(1.0/CLOCKS_PER_SEC)
 
+// Another remark
 
 // USED TO PASS PARAMETERS TO THE THREAD, AND STORE THE THREAD RELATED PARAMETERS
 typedef struct _ThreadParams {
